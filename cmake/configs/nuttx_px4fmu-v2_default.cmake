@@ -164,10 +164,13 @@ set(config_module_list
 
 	# Tutorial code from
 	# https://px4.io/dev/example_fixedwing_control
-	#examples/fixedwing_control
+	#examples/fixedwing_controForl
 
 	# Hardware test
 	#examples/hwtest
+	
+	# For UAVGP2016
+	modules/example_lz
 )
 
 set(config_extra_builtin_cmds

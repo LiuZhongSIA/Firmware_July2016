@@ -89,8 +89,13 @@
 #include <uORB/topics/vision_position_estimate.h>
 #include <uORB/topics/vtol_vehicle_status.h>
 #include <uORB/topics/wind_estimate.h>
+#include <uORB/topics/task_status_change.h>
+#include <uORB/topics/task_status_monitor.h>
+#include <uORB/topics/fixed_target_position.h>
+#include <uORB/topics/fixed_position_return.h>
+#include <uORB/topics/vision_num_scan.h>
+#include <uORB/topics/vision_one_num_get.h>
 #include <uORB/uORB.h>
-
 
 static uint16_t cm_uint16_from_m_float(float m);
 static void get_mavlink_mode_state(struct vehicle_status_s *status, uint8_t *mavlink_state,
@@ -3218,6 +3223,90 @@ protected:
 	}
 };
 
+//By LiuZhong
+
+class MavlinkStreamTaskStatusMonitor : public MavlinkStream
+{
+
+};
+
+class MavlinkStreamFixedTargetPsition : public MavlinkStream
+{
+
+};
+
+class MavlinkStreamVisionNumScan : public MavlinkStream
+{
+
+};
+
+class MavlinkStreamVisionOneNumGet : public MavlinkStream
+{
+public:
+	const char *get_name() const
+	{
+		return MavlinkStreamVisionOneNumGet::get_name_static();
+	}
+
+	static const char *get_name_static()
+	{
+		return "VISION_ONE_NUM_GET";
+	}
+
+	static uint8_t get_id_static()
+	{
+		return MAVLINK_MSG_ID_VISION_ONE_NUM_GET;
+	}
+
+    uint8_t get_id()
+    {
+        return get_id_static();
+    }
+
+	static MavlinkStream *new_instance(Mavlink *mavlink)
+	{
+		return new MavlinkStreamVisionOneNumGet(mavlink);
+	}
+
+	unsigned get_size()
+	{
+		return (_vision_one_num_get_time > 0) ? MAVLINK_MSG_ID_VISION_ONE_NUM_GET_LEN + MAVLINK_NUM_NON_PAYLOAD_BYTES : 0;
+	}
+
+private:
+	MavlinkOrbSubscription *_vision_one_num_get_sub;
+	uint64_t _vision_one_num_get_time;
+
+
+	/* do not allow top copying this class */
+	MavlinkStreamVisionOneNumGet(MavlinkStreamVisionOneNumGet &);
+	MavlinkStreamVisionOneNumGet& operator = (const MavlinkStreamVisionOneNumGet &);
+
+protected:
+	explicit MavlinkStreamVisionOneNumGet(Mavlink *mavlink) : MavlinkStream(mavlink),
+		_vision_one_num_get_sub(_mavlink->add_orb_subscription(ORB_ID(vision_one_num_get))),
+		_vision_one_num_get_time(0)
+	{}
+
+	void send(const hrt_abstime t)
+	{
+		struct vision_one_num_get_s vision_one_num_get;
+
+		bool updated = _vision_one_num_get_sub->update(&_vision_one_num_get_time, &vision_one_num_get);
+
+		if (updated) {
+
+			mavlink_vision_one_num_get_t msg;
+
+			msg.timestamp=vision_one_num_get.timestamp;
+			msg.num=vision_one_num_get.num;
+
+			mavlink_msg_vision_one_num_get_send_struct(_mavlink->get_channel(), &msg);
+		}
+	}
+};
+
+
 const StreamListItem *streams_list[] = {
 	new StreamListItem(&MavlinkStreamHeartbeat::new_instance, &MavlinkStreamHeartbeat::get_name_static, &MavlinkStreamHeartbeat::get_id_static),
 	new StreamListItem(&MavlinkStreamStatustext::new_instance, &MavlinkStreamStatustext::get_name_static, &MavlinkStreamStatustext::get_id_static),
@@ -3261,5 +3350,9 @@ const StreamListItem *streams_list[] = {
 	new StreamListItem(&MavlinkStreamAltitude::new_instance, &MavlinkStreamAltitude::get_name_static, &MavlinkStreamAltitude::get_id_static),
 	new StreamListItem(&MavlinkStreamADSBVehicle::new_instance, &MavlinkStreamADSBVehicle::get_name_static, &MavlinkStreamADSBVehicle::get_id_static),
 	new StreamListItem(&MavlinkStreamWind::new_instance, &MavlinkStreamWind::get_name_static, &MavlinkStreamWind::get_id_static),
+	//new StreamListItem(&MavlinkStreamTaskStatusMonitor::new_instance, &MavlinkStreamTaskStatusMonitor::get_name_static, &MavlinkStreamTaskStatusMonitor::get_id_static),
+	//new StreamListItem(&MavlinkStreamFixedTargetPsition::new_instance, &MavlinkStreamFixedTargetPsition::get_name_static, &MavlinkStreamFixedTargetPsition::get_id_static),
+	//new StreamListItem(&MavlinkStreamVisionNumScan::new_instance, &MavlinkStreamVisionNumScan::get_name_static, &MavlinkStreamVisionNumScan::get_id_static),
+	new StreamListItem(&MavlinkStreamVisionOneNumGet::new_instance, &MavlinkStreamVisionOneNumGet::get_name_static, &MavlinkStreamVisionOneNumGet::get_id_static),
 	nullptr
 };

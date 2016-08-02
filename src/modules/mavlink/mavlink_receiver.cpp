@@ -125,6 +125,10 @@ MavlinkReceiver::MavlinkReceiver(Mavlink *parent) :
 	_time_offset_pub(nullptr),
 	_follow_target_pub(nullptr),
 	_transponder_report_pub(nullptr),
+	_task_status_monitor_pub(nullptr),   //设置为空变量
+	_fixed_target_position_pub(nullptr),
+	_vision_num_scan_pub(nullptr),
+	_vision_one_num_get_pub(nullptr),
 	_control_mode_sub(orb_subscribe(ORB_ID(vehicle_control_mode))),
 	_hil_frames(0),
 	_old_timestamp(0),
@@ -261,6 +265,22 @@ MavlinkReceiver::handle_message(mavlink_message_t *msg)
 
 	case MAVLINK_MSG_ID_BATTERY_STATUS:
 		handle_message_battery_status(msg);
+		break;
+
+	case MAVLINK_MSG_ID_TASK_STATUS_MONITOR:
+		handle_message_task_status_monitor(msg);
+		break;
+
+	case MAVLINK_MSG_ID_FIXED_TARGET_POSITION:
+			handle_message_fixed_target_position(msg);
+		break;
+
+	case MAVLINK_MSG_ID_VISION_NUM_SCAN:
+			handle_message_vision_num_scan(msg);
+		break;
+
+	case MAVLINK_MSG_ID_VISION_ONE_NUM_GET:
+			handle_message_vision_one_num_get(msg);
 		break;
 
 	default:
@@ -2037,6 +2057,48 @@ MavlinkReceiver::handle_message_hil_state_quaternion(mavlink_message_t *msg)
 		} else {
 			orb_publish(ORB_ID(battery_status), _battery_pub, &hil_battery_status);
 		}
+	}
+}
+
+void
+MavlinkReceiver::handle_message_task_status_monitor(mavlink_message_t *msg)
+{
+
+}
+void
+MavlinkReceiver::handle_message_fixed_target_position(mavlink_message_t *msg)
+{
+
+}
+void
+MavlinkReceiver::handle_message_vision_num_scan(mavlink_message_t *msg)
+{
+
+}
+void
+MavlinkReceiver::handle_message_vision_one_num_get(mavlink_message_t *msg)
+{
+	mavlink_vision_one_num_get_t one_num;
+	mavlink_msg_vision_one_num_get_decode(msg, &one_num);
+
+	struct vision_one_num_get_s f;
+	memset(&f, 0, sizeof(f));
+
+	f.timestamp=hrt_absolute_time();
+	f.num=one_num.num;
+	f._padding0[0]=0;
+	f._padding0[1]=1;
+	f._padding0[2]=2;
+	f._padding0[3]=3;
+	f._padding0[4]=4;
+	f._padding0[5]=5;
+	f._padding0[6]=6;
+
+	if (_vision_one_num_get_pub == nullptr) {
+		_vision_one_num_get_pub = orb_advertise(ORB_ID(vision_one_num_get), &f);
+
+	} else {
+		orb_publish(ORB_ID(vision_one_num_get), _vision_one_num_get_pub, &f);
 	}
 }
 

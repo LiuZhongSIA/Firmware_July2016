@@ -118,6 +118,8 @@ set(msg_file_names
 	vtol_vehicle_status.msg
 	wind_estimate.msg
 	fixed_target_position.msg
+	fixed_position_return.msg
+	task_status_change.msg
 	task_status_monitor.msg
 	vision_num_scan.msg
 	vision_one_num_get.msg

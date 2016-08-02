@@ -77,6 +77,12 @@
 #include <uORB/topics/follow_target.h>
 #include <uORB/topics/transponder_report.h>
 #include <uORB/topics/gps_inject_data.h>
+#include <uORB/topics/task_status_change.h>
+#include <uORB/topics/task_status_monitor.h>
+#include <uORB/topics/fixed_target_position.h>
+#include <uORB/topics/fixed_position_return.h>
+#include <uORB/topics/vision_num_scan.h>
+#include <uORB/topics/vision_one_num_get.h>
 
 #include "mavlink_ftp.h"
 
@@ -143,6 +149,10 @@ private:
 	void handle_message_adsb_vehicle(mavlink_message_t *msg);
 	void handle_message_gps_rtcm_data(mavlink_message_t *msg);
 	void handle_message_battery_status(mavlink_message_t *msg);
+	void handle_message_task_status_monitor(mavlink_message_t *msg);
+	void handle_message_fixed_target_position(mavlink_message_t *msg);
+	void handle_message_vision_num_scan(mavlink_message_t *msg);
+	void handle_message_vision_one_num_get(mavlink_message_t *msg);
 
 	void *receive_thread(void *arg);
 
@@ -217,6 +227,10 @@ private:
 	orb_advert_t _time_offset_pub;
 	orb_advert_t _follow_target_pub;
 	orb_advert_t _transponder_report_pub;
+	orb_advert_t _task_status_monitor_pub;
+	orb_advert_t _fixed_target_position_pub;
+	orb_advert_t _vision_num_scan_pub;
+	orb_advert_t _vision_one_num_get_pub;
 	static const int _gps_inject_data_pub_size = 4;
 	orb_advert_t _gps_inject_data_pub[_gps_inject_data_pub_size];
 	int _gps_inject_data_next_idx = 0;

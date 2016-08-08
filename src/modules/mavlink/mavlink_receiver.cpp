@@ -267,20 +267,28 @@ MavlinkReceiver::handle_message(mavlink_message_t *msg)
 		handle_message_battery_status(msg);
 		break;
 
+	case MAVLINK_MSG_ID_TASK_STATUS_CHANGE:
+		handle_message_task_status_change(msg);
+		break;
+
 	case MAVLINK_MSG_ID_TASK_STATUS_MONITOR:
 		handle_message_task_status_monitor(msg);
 		break;
 
 	case MAVLINK_MSG_ID_FIXED_TARGET_POSITION:
-			handle_message_fixed_target_position(msg);
+		handle_message_fixed_target_position(msg);
+		break;
+
+	case MAVLINK_MSG_ID_FIXED_TARGET_RETURN:
+		handle_message_fixed_target_return(msg);
 		break;
 
 	case MAVLINK_MSG_ID_VISION_NUM_SCAN:
-			handle_message_vision_num_scan(msg);
+		handle_message_vision_num_scan(msg);
 		break;
 
 	case MAVLINK_MSG_ID_VISION_ONE_NUM_GET:
-			handle_message_vision_one_num_get(msg);
+		handle_message_vision_one_num_get(msg);
 		break;
 
 	default:
@@ -2060,13 +2068,25 @@ MavlinkReceiver::handle_message_hil_state_quaternion(mavlink_message_t *msg)
 	}
 }
 
+// By LiuZhong
+// ------------------------------------------------------ //
 void
 MavlinkReceiver::handle_message_task_status_monitor(mavlink_message_t *msg)
 {
 
 }
 void
+MavlinkReceiver::handle_message_task_status_change(mavlink_message_t *msg)
+{
+
+}
+void
 MavlinkReceiver::handle_message_fixed_target_position(mavlink_message_t *msg)
+{
+
+}
+void
+MavlinkReceiver::handle_message_fixed_target_return(mavlink_message_t *msg)
 {
 
 }
@@ -2085,6 +2105,7 @@ MavlinkReceiver::handle_message_vision_one_num_get(mavlink_message_t *msg)
 	memset(&f, 0, sizeof(f));
 
 	f.timestamp=hrt_absolute_time();
+	f.serial_num=one_num.serial_num;
 	f.num=one_num.num;
 	f._padding0[0]=0;
 	f._padding0[1]=1;
@@ -2092,7 +2113,6 @@ MavlinkReceiver::handle_message_vision_one_num_get(mavlink_message_t *msg)
 	f._padding0[3]=3;
 	f._padding0[4]=4;
 	f._padding0[5]=5;
-	f._padding0[6]=6;
 
 	if (_vision_one_num_get_pub == nullptr) {
 		_vision_one_num_get_pub = orb_advertise(ORB_ID(vision_one_num_get), &f);
@@ -2101,6 +2121,7 @@ MavlinkReceiver::handle_message_vision_one_num_get(mavlink_message_t *msg)
 		orb_publish(ORB_ID(vision_one_num_get), _vision_one_num_get_pub, &f);
 	}
 }
+// ------------------------------------------------------ //
 
 /**
  * Receive data from UART.

@@ -14,8 +14,12 @@
 #include <nuttx/sched.h>
 #include <systemlib/systemlib.h>
 #include <systemlib/err.h>
+
+// 6个自动定义的Mavlink消息
+#include <uORB/topics/task_status_change.h>
 #include <uORB/topics/task_status_monitor.h>
 #include <uORB/topics/fixed_target_position.h>
+#include <uORB/topics/fixed_target_return.h>
 #include <uORB/topics/vision_num_scan.h>
 #include <uORB/topics/vision_one_num_get.h>
 
@@ -103,7 +107,6 @@ int example_lz_thread_main(int argc, char *argv[])
 			for_pub._padding0[3]=3;
 			for_pub._padding0[4]=4;
 			for_pub._padding0[5]=5;
-			for_pub._padding0[6]=6;
 			_vision_one_num_get_pub = orb_advertise(ORB_ID(vision_one_num_get), &for_pub);
 			orb_publish(ORB_ID(vision_one_num_get), _vision_one_num_get_pub, &for_pub);
 		}

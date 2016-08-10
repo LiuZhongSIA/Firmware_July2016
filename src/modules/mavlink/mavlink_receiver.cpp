@@ -2083,12 +2083,60 @@ MavlinkReceiver::handle_message_task_status_change(mavlink_message_t *msg)
 void
 MavlinkReceiver::handle_message_fixed_target_position(mavlink_message_t *msg)
 {
+	mavlink_fixed_target_position_t one_position;
+	mavlink_msg_fixed_target_position_decode(msg, &one_position);
 
+	struct fixed_target_position_s f;
+	memset(&f, 0, sizeof(f));
+
+	f.timestamp=hrt_absolute_time();
+	f.home_lon=one_position.home_lon;
+	f.home_lat=one_position.home_lat;
+	f.home_alt=one_position.home_alt;
+	f.observe_lon=one_position.observe_lon;
+	f.observe_lat=one_position.observe_lat;
+	f.observe_alt=one_position.observe_alt;
+	f.spray_left_lon=one_position.spray_left_lon;
+	f.spray_left_lat=one_position.spray_left_lat;
+	f.spray_left_alt=one_position.spray_left_alt;
+	f.spray_right_lon=one_position.spray_right_lon;
+	f.spray_right_lat=one_position.spray_right_lat;
+	f.spray_right_alt=one_position.spray_right_alt;
+
+	if (_fixed_target_position_pub == nullptr) {
+		_fixed_target_position_pub = orb_advertise(ORB_ID(fixed_target_position), &f);
+	} else {
+		orb_publish(ORB_ID(fixed_target_position), _fixed_target_position_pub, &f);
+	}
 }
 void
 MavlinkReceiver::handle_message_fixed_target_return(mavlink_message_t *msg)
 {
+	mavlink_fixed_target_return_t one_position;
+	mavlink_msg_fixed_target_return_decode(msg, &one_position);
 
+	struct fixed_target_return_s f;
+	memset(&f, 0, sizeof(f));
+
+	f.timestamp=hrt_absolute_time();
+	f.home_lon=one_position.home_lon;
+	f.home_lat=one_position.home_lat;
+	f.home_alt=one_position.home_alt;
+	f.observe_lon=one_position.observe_lon;
+	f.observe_lat=one_position.observe_lat;
+	f.observe_alt=one_position.observe_alt;
+	f.spray_left_lon=one_position.spray_left_lon;
+	f.spray_left_lat=one_position.spray_left_lat;
+	f.spray_left_alt=one_position.spray_left_alt;
+	f.spray_right_lon=one_position.spray_right_lon;
+	f.spray_right_lat=one_position.spray_right_lat;
+	f.spray_right_alt=one_position.spray_right_alt;
+
+	if (_fixed_target_return_pub == nullptr) {
+		_fixed_target_return_pub = orb_advertise(ORB_ID(fixed_target_return), &f);
+	} else {
+		orb_publish(ORB_ID(fixed_target_return), _fixed_target_return_pub, &f);
+	}
 }
 void
 MavlinkReceiver::handle_message_vision_num_scan(mavlink_message_t *msg)

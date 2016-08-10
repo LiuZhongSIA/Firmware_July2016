@@ -83,32 +83,39 @@ int example_lz_main(int argc, char *argv[])
 // 线程主体
 int example_lz_thread_main(int argc, char *argv[])
 {
-	int _vision_one_num_get_sub;
-	_vision_one_num_get_sub = orb_subscribe(ORB_ID(vision_one_num_get));
-	struct vision_one_num_get_s for_sub;
-	memset(&for_sub, 0, sizeof(for_sub));
+	// 订阅位置信息
+	int _fixed_target_position_sub;
+	_fixed_target_position_sub = orb_subscribe(ORB_ID(fixed_target_position));
+	struct fixed_target_position_s position_sub;
+	// 发布位置信息
 	bool updated;
-	orb_advert_t _vision_one_num_get_pub;
-	struct vision_one_num_get_s for_pub;
-	memset(&for_pub, 0, sizeof(for_pub));
+	orb_advert_t _fixed_target_return_pub;
+	struct fixed_target_return_s position_pub;
+	memset(&position_pub, 0, sizeof(position_pub));
 	while(!thread_should_exit)				// 如果线程没有被停止
 	{
-		orb_check(_vision_one_num_get_sub, &updated);
+		orb_check(_fixed_target_position_sub, &updated);
 		if (updated)
 		{
 			// 读取线程
-			orb_copy(ORB_ID(vision_one_num_get), _vision_one_num_get_sub, &for_sub);
-			// 在原来线程的基础上发布一个Mavlink消息
-			for_pub.timestamp=hrt_absolute_time();
-			for_pub.num=for_sub.num*2;
-			for_pub._padding0[0]=0;
-			for_pub._padding0[1]=1;
-			for_pub._padding0[2]=2;
-			for_pub._padding0[3]=3;
-			for_pub._padding0[4]=4;
-			for_pub._padding0[5]=5;
-			_vision_one_num_get_pub = orb_advertise(ORB_ID(vision_one_num_get), &for_pub);
-			orb_publish(ORB_ID(vision_one_num_get), _vision_one_num_get_pub, &for_pub);
+			orb_copy(ORB_ID(fixed_target_position), _fixed_target_position_sub, &position_sub);
+
+			position_pub.timestamp=position_sub.timestamp;
+			position_pub.home_lon=position_sub.home_lon;
+			position_pub.home_lat=position_sub.home_lat;
+			position_pub.home_alt=position_sub.home_alt;
+			position_pub.observe_lon=position_sub.observe_lon;
+			position_pub.observe_lat=position_sub.observe_lat;
+			position_pub.observe_alt=position_sub.observe_alt;
+			position_pub.spray_left_lon=position_sub.spray_left_lon;
+			position_pub.spray_left_lat=position_sub.spray_left_lat;
+			position_pub.spray_left_alt=position_sub.spray_left_alt;
+			position_pub.spray_right_lon=position_sub.spray_right_lon;
+			position_pub.spray_right_lat=position_sub.spray_right_lat;
+			position_pub.spray_right_alt=position_sub.spray_right_alt;
+
+			_fixed_target_return_pub = orb_advertise(ORB_ID(fixed_target_return), &position_pub);
+			orb_publish(ORB_ID(fixed_target_return), _fixed_target_return_pub, &position_pub);
 		}
 		usleep(100000); // 100ms
 	}

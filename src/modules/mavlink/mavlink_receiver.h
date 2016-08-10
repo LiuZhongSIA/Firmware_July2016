@@ -232,8 +232,8 @@ private:
 	orb_advert_t _follow_target_pub;
 	orb_advert_t _transponder_report_pub;
 
+	orb_advert_t _task_status_change_pub;
 	orb_advert_t _task_status_monitor_pub;
-	orb_advert_t _task_status_chnage_pub;
 	orb_advert_t _fixed_target_position_pub;
 	orb_advert_t _fixed_target_return_pub;
 	orb_advert_t _vision_num_scan_pub;

@@ -2073,12 +2073,43 @@ MavlinkReceiver::handle_message_hil_state_quaternion(mavlink_message_t *msg)
 void
 MavlinkReceiver::handle_message_task_status_monitor(mavlink_message_t *msg)
 {
+	mavlink_task_status_monitor_t task_status_monitor;
+	mavlink_msg_task_status_monitor_decode(msg, &task_status_monitor);
 
+	struct task_status_monitor_s f;
+	memset(&f, 0, sizeof(f));
+
+	f.timestamp=hrt_absolute_time();
+	f.num_odd_even=task_status_monitor.num_odd_even;
+	f.task_status_1=task_status_monitor.task_status_1;
+	f.task_status_2=task_status_monitor.task_status_2;
+	f.target_lon=task_status_monitor.target_lon;
+	f.target_lat=task_status_monitor.target_lat;
+	f.target_alt=task_status_monitor.target_alt;
+
+	if (_task_status_monitor_pub == nullptr) {
+		_task_status_monitor_pub = orb_advertise(ORB_ID(task_status_monitor), &f);
+	} else {
+		orb_publish(ORB_ID(task_status_monitor), _task_status_monitor_pub, &f);
+	}
 }
 void
 MavlinkReceiver::handle_message_task_status_change(mavlink_message_t *msg)
 {
+	mavlink_task_status_change_t task_status_change;
+	mavlink_msg_task_status_change_decode(msg, &task_status_change);
 
+	struct task_status_change_s f;
+	memset(&f, 0, sizeof(f));
+
+	f.timestamp=hrt_absolute_time();
+	f.num_odd_even=task_status_change.num_odd_even;
+	f.task_status_1=task_status_change.task_status_1;
+	f.task_status_2=task_status_change.task_status_2;
+
+	// 需要修改成这样，不然无法发布，不知道为啥
+	_task_status_change_pub = orb_advertise(ORB_ID(task_status_change), &f);
+	orb_publish(ORB_ID(task_status_change), _task_status_change_pub, &f);
 }
 void
 MavlinkReceiver::handle_message_fixed_target_position(mavlink_message_t *msg)
@@ -2141,7 +2172,24 @@ MavlinkReceiver::handle_message_fixed_target_return(mavlink_message_t *msg)
 void
 MavlinkReceiver::handle_message_vision_num_scan(mavlink_message_t *msg)
 {
+	mavlink_vision_num_scan_t vision_num_scan;
+	mavlink_msg_vision_num_scan_decode(msg, &vision_num_scan);
 
+	struct vision_num_scan_s f;
+	memset(&f, 0, sizeof(f));
+
+	f.timestamp=hrt_absolute_time();
+	f.serial_num=vision_num_scan.serial_num;
+	f.cur_num=vision_num_scan.cur_num;
+	f.cur_num_lon=vision_num_scan.cur_num_lon;
+	f.cur_num_lat=vision_num_scan.cur_num_lat;
+	f.cur_num_alt=vision_num_scan.cur_num_alt;
+
+	if (_vision_num_scan_pub == nullptr) {
+		_vision_num_scan_pub = orb_advertise(ORB_ID(vision_num_scan), &f);
+	} else {
+		orb_publish(ORB_ID(vision_num_scan), _vision_num_scan_pub, &f);
+	}
 }
 void
 MavlinkReceiver::handle_message_vision_one_num_get(mavlink_message_t *msg)
@@ -2155,16 +2203,9 @@ MavlinkReceiver::handle_message_vision_one_num_get(mavlink_message_t *msg)
 	f.timestamp=hrt_absolute_time();
 	f.serial_num=one_num.serial_num;
 	f.num=one_num.num;
-	f._padding0[0]=0;
-	f._padding0[1]=1;
-	f._padding0[2]=2;
-	f._padding0[3]=3;
-	f._padding0[4]=4;
-	f._padding0[5]=5;
 
 	if (_vision_one_num_get_pub == nullptr) {
 		_vision_one_num_get_pub = orb_advertise(ORB_ID(vision_one_num_get), &f);
-
 	} else {
 		orb_publish(ORB_ID(vision_one_num_get), _vision_one_num_get_pub, &f);
 	}

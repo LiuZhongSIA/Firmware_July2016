@@ -3521,72 +3521,7 @@ protected:
 
 class MavlinkStreamVisionNumScan : public MavlinkStream
 {
-public:
-	const char *get_name() const
-	{
-		return MavlinkStreamVisionNumScan::get_name_static();
-	}
 
-	static const char *get_name_static()
-	{
-		return "VISION_NUM_SCAN";
-	}
-
-	static uint8_t get_id_static()
-	{
-		return MAVLINK_MSG_ID_VISION_NUM_SCAN;
-	}
-
-    uint8_t get_id()
-    {
-        return get_id_static();
-    }
-
-	static MavlinkStream *new_instance(Mavlink *mavlink)
-	{
-		return new MavlinkStreamVisionNumScan(mavlink);
-	}
-
-	unsigned get_size()
-	{
-		return (_vision_num_scan_time > 0) ? MAVLINK_MSG_ID_VISION_NUM_SCAN_LEN + MAVLINK_NUM_NON_PAYLOAD_BYTES : 0;
-	}
-
-private:
-	MavlinkOrbSubscription *_vision_num_scan_sub;
-	uint64_t _vision_num_scan_time;
-
-
-	/* do not allow top copying this class */
-	MavlinkStreamVisionNumScan(MavlinkStreamVisionNumScan &);
-	MavlinkStreamVisionNumScan& operator = (const MavlinkStreamVisionNumScan &);
-
-protected:
-	explicit MavlinkStreamVisionNumScan(Mavlink *mavlink) : MavlinkStream(mavlink),
-		_vision_num_scan_sub(_mavlink->add_orb_subscription(ORB_ID(vision_num_scan))),
-		_vision_num_scan_time(0)
-	{}
-
-	void send(const hrt_abstime t)
-	{
-		struct vision_num_scan_s vision_num_scan;
-
-		bool updated = _vision_num_scan_sub->update(&_vision_num_scan_time, &vision_num_scan);
-
-		if (updated) {
-
-			mavlink_vision_num_scan_t msg;
-
-			msg.timestamp=vision_num_scan.timestamp;
-			msg.serial_num=vision_num_scan.serial_num;
-			msg.cur_num=vision_num_scan.cur_num;
-			msg.cur_num_lon=vision_num_scan.cur_num_lon;
-			msg.cur_num_lat=vision_num_scan.cur_num_lat;
-			msg.cur_num_alt=vision_num_scan.cur_num_alt;
-
-			mavlink_msg_vision_num_scan_send_struct(_mavlink->get_channel(), &msg);
-		}
-	}
 };
 
 class MavlinkStreamVisionOneNumGet : public MavlinkStream
@@ -3705,7 +3640,7 @@ const StreamListItem *streams_list[] = {
 	new StreamListItem(&MavlinkStreamTaskStatusMonitor::new_instance, &MavlinkStreamTaskStatusMonitor::get_name_static, &MavlinkStreamTaskStatusMonitor::get_id_static),
 	new StreamListItem(&MavlinkStreamFixedTargetPosition::new_instance, &MavlinkStreamFixedTargetPosition::get_name_static, &MavlinkStreamFixedTargetPosition::get_id_static),
 	new StreamListItem(&MavlinkStreamFixedTargetReturn::new_instance, &MavlinkStreamFixedTargetReturn::get_name_static, &MavlinkStreamFixedTargetReturn::get_id_static),
-	new StreamListItem(&MavlinkStreamVisionNumScan::new_instance, &MavlinkStreamVisionNumScan::get_name_static, &MavlinkStreamVisionNumScan::get_id_static),
+	//new StreamListItem(&MavlinkStreamVisionNumScan::new_instance, &MavlinkStreamVisionNumScan::get_name_static, &MavlinkStreamVisionNumScan::get_id_static),
 	new StreamListItem(&MavlinkStreamVisionOneNumGet::new_instance, &MavlinkStreamVisionOneNumGet::get_name_static, &MavlinkStreamVisionOneNumGet::get_id_static),
 	nullptr
 };

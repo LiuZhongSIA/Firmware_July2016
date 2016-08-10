@@ -1836,10 +1836,10 @@ Mavlink::task_main(int argc, char *argv[])
 	configure_stream("COMMAND_LONG", 100.0f);
 
 	// 添加发送指令！！！(Important) LZ
-	configure_stream("TASK_STATUS_MONITOR", 10.0);
-	configure_stream("FIXED_TARGET_RETURN", 10.0);
-	configure_stream("VISION_NUM_SCAN", 10.0);
-	configure_stream("VISION_ONE_NUM_GET", 10.0);
+	configure_stream("TASK_STATUS_MONITOR", 5.0f);
+	configure_stream("FIXED_TARGET_RETURN", 5.0f);
+	//configure_stream("VISION_NUM_SCAN", 5.0f);
+	configure_stream("VISION_ONE_NUM_GET", 5.0f);
 
 	/* PARAM_VALUE stream */
 	_parameters_manager = (MavlinkParametersManager *) MavlinkParametersManager::new_instance(this);

@@ -2172,24 +2172,7 @@ MavlinkReceiver::handle_message_fixed_target_return(mavlink_message_t *msg)
 void
 MavlinkReceiver::handle_message_vision_num_scan(mavlink_message_t *msg)
 {
-	mavlink_vision_num_scan_t vision_num_scan;
-	mavlink_msg_vision_num_scan_decode(msg, &vision_num_scan);
 
-	struct vision_num_scan_s f;
-	memset(&f, 0, sizeof(f));
-
-	f.timestamp=hrt_absolute_time();
-	f.serial_num=vision_num_scan.serial_num;
-	f.cur_num=vision_num_scan.cur_num;
-	f.cur_num_lon=vision_num_scan.cur_num_lon;
-	f.cur_num_lat=vision_num_scan.cur_num_lat;
-	f.cur_num_alt=vision_num_scan.cur_num_alt;
-
-	if (_vision_num_scan_pub == nullptr) {
-		_vision_num_scan_pub = orb_advertise(ORB_ID(vision_num_scan), &f);
-	} else {
-		orb_publish(ORB_ID(vision_num_scan), _vision_num_scan_pub, &f);
-	}
 }
 void
 MavlinkReceiver::handle_message_vision_one_num_get(mavlink_message_t *msg)

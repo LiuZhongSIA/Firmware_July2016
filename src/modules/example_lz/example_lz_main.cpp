@@ -104,9 +104,7 @@ int example_lz_thread_main(int argc, char *argv[])
 	memset(&task_status_pub, 0, sizeof(task_status_pub));
 
 	// 发布数字扫描信息
-	orb_advert_t _vision_num_scan_pub;
-	struct vision_num_scan_s num_scan_pub;
-	memset(&num_scan_pub, 0, sizeof(num_scan_pub));
+
 	// 发布数据采集信息
 	orb_advert_t _vision_one_num_get_pub;
 	struct vision_one_num_get_s one_num_pub;
@@ -160,14 +158,7 @@ int example_lz_thread_main(int argc, char *argv[])
 
 			if(task_status_pub.task_status_1==2) //扫描
 			{
-				num_scan_pub.timestamp=hrt_absolute_time();
-				num_scan_pub.serial_num=10;
-				num_scan_pub.cur_num=9;
-				num_scan_pub.cur_num_lon=position_sub.home_lon;
-				num_scan_pub.cur_num_lat=position_sub.home_lat;
-				num_scan_pub.cur_num_alt=position_sub.home_alt;
-				_vision_num_scan_pub = orb_advertise(ORB_ID(vision_num_scan), &num_scan_pub);
-				orb_publish(ORB_ID(vision_num_scan), _vision_num_scan_pub, &num_scan_pub);
+
 			}
 			if(task_status_pub.task_status_1==3) //Num1 - Num5
 			{

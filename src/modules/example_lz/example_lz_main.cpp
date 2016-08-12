@@ -83,6 +83,8 @@ int example_lz_main(int argc, char *argv[])
 // 线程主体
 int example_lz_thread_main(int argc, char *argv[])
 {
+	thread_running=true;
+
 	// 订阅位置信息
 	int _fixed_target_position_sub;
 	_fixed_target_position_sub = orb_subscribe(ORB_ID(fixed_target_position));
@@ -214,5 +216,6 @@ int example_lz_thread_main(int argc, char *argv[])
 		usleep(100000); // 100ms
 	}
 
+	thread_running=false;
 	return 0;
 }

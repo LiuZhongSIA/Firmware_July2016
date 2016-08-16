@@ -3578,7 +3578,6 @@ protected:
 			mavlink_vision_num_scan_t msg;
 
 			msg.timestamp=vision_num_scan.timestamp;
-			msg.serial_num=vision_num_scan.serial_num;
 			msg.cur_num=vision_num_scan.cur_num;
 			msg.cur_num_lon=vision_num_scan.cur_num_lon;
 			msg.cur_num_lat=vision_num_scan.cur_num_lat;

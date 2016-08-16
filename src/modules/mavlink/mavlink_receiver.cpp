@@ -2184,7 +2184,6 @@ MavlinkReceiver::handle_message_vision_num_scan(mavlink_message_t *msg)
 	memset(&f, 0, sizeof(f));
 
 	f.timestamp=hrt_absolute_time();
-	f.serial_num= vision_num_scan.serial_num;
 	f.cur_num= vision_num_scan.cur_num;
 	f.cur_num_lon= vision_num_scan.cur_num_lon;
 	f.cur_num_lat= vision_num_scan.cur_num_lat;

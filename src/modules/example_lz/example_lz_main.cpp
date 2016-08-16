@@ -163,7 +163,6 @@ int example_lz_thread_main(int argc, char *argv[])
 			if(task_status_pub.task_status_1==2) //扫描
 			{
 				num_scan_pub.timestamp=hrt_absolute_time();
-				num_scan_pub.serial_num=10;
 				num_scan_pub.cur_num=9;
 				num_scan_pub.cur_num_lon=123;
 				num_scan_pub.cur_num_lat=60;

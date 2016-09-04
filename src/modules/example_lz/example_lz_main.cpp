@@ -117,7 +117,7 @@ int example_lz_thread_main(int argc, char *argv[])
 	// 如果线程没有被停止
 	while(!thread_should_exit)
 	{
-		// 位置信息
+		// 位置信息——H、O、SL、SR
 		orb_check(_fixed_target_position_sub, &updated_pos);
 		if (updated_pos)
 		{
@@ -137,12 +137,12 @@ int example_lz_thread_main(int argc, char *argv[])
 			position_pub.spray_right_lon=position_sub.spray_right_lon;
 			position_pub.spray_right_lat=position_sub.spray_right_lat;
 			position_pub.spray_right_alt=position_sub.spray_right_alt;
-			// 发布主题
+			// 发布主题，返回上述位置信息
 			_fixed_target_return_pub = orb_advertise(ORB_ID(fixed_target_return), &position_pub);
 			orb_publish(ORB_ID(fixed_target_return), _fixed_target_return_pub, &position_pub);
 		}
 
-		// 任务状态信息
+		// 任务状态修改信息
 		orb_check(_task_status_change_sub, &updated_task);
 		if (updated_task)
 		{
@@ -151,64 +151,81 @@ int example_lz_thread_main(int argc, char *argv[])
 			// 变量赋值
 			task_status_pub.timestamp=hrt_absolute_time();
 			task_status_pub.num_odd_even=task_status_sub.num_odd_even;
-			task_status_pub.task_status_1=task_status_sub.task_status_1;
-			task_status_pub.task_status_2=task_status_sub.task_status_2;
+			task_status_pub.task_status_1=task_status_sub.task_status_1; //实际任务状态
+			task_status_pub.task_status_2=task_status_sub.task_status_2; //数字编号
 			task_status_pub.target_lon=position_sub.home_lon;
 			task_status_pub.target_lat=position_sub.home_lat;
 			task_status_pub.target_alt=position_sub.home_alt;
-			// 发布主题
+			// 发布主题，返回任务状态监视信息
 			_task_status_monitor_pub = orb_advertise(ORB_ID(task_status_monitor), &task_status_pub);
 			orb_publish(ORB_ID(task_status_monitor), _task_status_monitor_pub, &task_status_pub);
 
-			if(task_status_pub.task_status_1==2) //扫描
+			if(task_status_sub.task_status_1==3) //悬停
+			{
+				// 仅仅进行悬停
+			}
+			if(task_status_sub.task_status_1==4) //预扫
 			{
 				num_scan_pub.timestamp=hrt_absolute_time();
+				// 扫描信息--1\5\9
+				usleep(1000000);
+				num_scan_pub.cur_num=1;
+				num_scan_pub.cur_num_lon=121;
+				num_scan_pub.cur_num_lat=61;
+				num_scan_pub.cur_num_alt=121;
+				_vision_num_scan_pub = orb_advertise(ORB_ID(vision_num_scan), &num_scan_pub);
+				orb_publish(ORB_ID(vision_num_scan), _vision_num_scan_pub, &num_scan_pub);
+				usleep(1000000);
+				num_scan_pub.cur_num=5;
+				num_scan_pub.cur_num_lon=125;
+				num_scan_pub.cur_num_lat=65;
+				num_scan_pub.cur_num_alt=125;
+				_vision_num_scan_pub = orb_advertise(ORB_ID(vision_num_scan), &num_scan_pub);
+				orb_publish(ORB_ID(vision_num_scan), _vision_num_scan_pub, &num_scan_pub);
+				usleep(1000000);
 				num_scan_pub.cur_num=9;
-				num_scan_pub.cur_num_lon=123;
-				num_scan_pub.cur_num_lat=60;
-				num_scan_pub.cur_num_alt=120;
+				num_scan_pub.cur_num_lon=129;
+				num_scan_pub.cur_num_lat=69;
+				num_scan_pub.cur_num_alt=129;
 				_vision_num_scan_pub = orb_advertise(ORB_ID(vision_num_scan), &num_scan_pub);
 				orb_publish(ORB_ID(vision_num_scan), _vision_num_scan_pub, &num_scan_pub);
 			}
-			if(task_status_pub.task_status_1==3) //Num1 - Num5
+			if(task_status_sub.task_status_1==5) //飞往“点O”
 			{
+				/*usleep(1000000);
+				// 进行数字识别
+				task_status_pub.task_status_1=7;
+				_task_status_monitor_pub = orb_advertise(ORB_ID(task_status_monitor), &task_status_pub);
+				orb_publish(ORB_ID(task_status_monitor), _task_status_monitor_pub, &task_status_pub);*/
+				usleep(1000000);
+				// 返回扫描结果
 				one_num_pub.timestamp=hrt_absolute_time();
-				one_num_pub.serial_num=1;
-				one_num_pub.num=11;
+				one_num_pub.serial_num=task_status_sub.task_status_2; //数字编号
+				one_num_pub.num=task_status_sub.task_status_2+10; //识别数字
 				_vision_one_num_get_pub = orb_advertise(ORB_ID(vision_one_num_get), &one_num_pub);
 				orb_publish(ORB_ID(vision_one_num_get), _vision_one_num_get_pub, &one_num_pub);
+				/*usleep(1000000);
+				// 进行旋喷
+				task_status_pub.task_status_1=12;
+				_task_status_monitor_pub = orb_advertise(ORB_ID(task_status_monitor), &task_status_pub);
+				orb_publish(ORB_ID(task_status_monitor), _task_status_monitor_pub, &task_status_pub);
+				usleep(1000000);
+				// 完成
+				task_status_pub.task_status_1=13;
+				_task_status_monitor_pub = orb_advertise(ORB_ID(task_status_monitor), &task_status_pub);
+				orb_publish(ORB_ID(task_status_monitor), _task_status_monitor_pub, &task_status_pub);*/
 			}
-			if(task_status_pub.task_status_1==4)
+			if(task_status_sub.task_status_1==13) //喷绘“完成”
 			{
-				one_num_pub.timestamp=hrt_absolute_time();
-				one_num_pub.serial_num=2;
-				one_num_pub.num=12;
-				_vision_one_num_get_pub = orb_advertise(ORB_ID(vision_one_num_get), &one_num_pub);
-				orb_publish(ORB_ID(vision_one_num_get), _vision_one_num_get_pub, &one_num_pub);
+				// 作为喷绘完成的标志
 			}
-			if(task_status_pub.task_status_1==5)
+			if(task_status_sub.task_status_1==14) //“返航”
 			{
-				one_num_pub.timestamp=hrt_absolute_time();
-				one_num_pub.serial_num=3;
-				one_num_pub.num=13;
-				_vision_one_num_get_pub = orb_advertise(ORB_ID(vision_one_num_get), &one_num_pub);
-				orb_publish(ORB_ID(vision_one_num_get), _vision_one_num_get_pub, &one_num_pub);
+				// 任务完成后，返航
 			}
-			if(task_status_pub.task_status_1==6)
+			if(task_status_sub.task_status_1==15) //“降落”
 			{
-				one_num_pub.timestamp=hrt_absolute_time();
-				one_num_pub.serial_num=4;
-				one_num_pub.num=14;
-				_vision_one_num_get_pub = orb_advertise(ORB_ID(vision_one_num_get), &one_num_pub);
-				orb_publish(ORB_ID(vision_one_num_get), _vision_one_num_get_pub, &one_num_pub);
-			}
-			if(task_status_pub.task_status_1==7)
-			{
-				one_num_pub.timestamp=hrt_absolute_time();
-				one_num_pub.serial_num=5;
-				one_num_pub.num=15;
-				_vision_one_num_get_pub = orb_advertise(ORB_ID(vision_one_num_get), &one_num_pub);
-				orb_publish(ORB_ID(vision_one_num_get), _vision_one_num_get_pub, &one_num_pub);
+				// 降落在当前经纬位置下
 			}
 		}
 

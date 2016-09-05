@@ -192,11 +192,11 @@ int example_lz_thread_main(int argc, char *argv[])
 			}
 			if(task_status_sub.task_status_1==5) //飞往“点O”
 			{
-				/*usleep(1000000);
+				usleep(1000000);
 				// 进行数字识别
 				task_status_pub.task_status_1=7;
 				_task_status_monitor_pub = orb_advertise(ORB_ID(task_status_monitor), &task_status_pub);
-				orb_publish(ORB_ID(task_status_monitor), _task_status_monitor_pub, &task_status_pub);*/
+				orb_publish(ORB_ID(task_status_monitor), _task_status_monitor_pub, &task_status_pub);
 				usleep(1000000);
 				// 返回扫描结果
 				one_num_pub.timestamp=hrt_absolute_time();
@@ -204,7 +204,7 @@ int example_lz_thread_main(int argc, char *argv[])
 				one_num_pub.num=task_status_sub.task_status_2+10; //识别数字
 				_vision_one_num_get_pub = orb_advertise(ORB_ID(vision_one_num_get), &one_num_pub);
 				orb_publish(ORB_ID(vision_one_num_get), _vision_one_num_get_pub, &one_num_pub);
-				/*usleep(1000000);
+				usleep(1000000);
 				// 进行旋喷
 				task_status_pub.task_status_1=12;
 				_task_status_monitor_pub = orb_advertise(ORB_ID(task_status_monitor), &task_status_pub);
@@ -213,7 +213,7 @@ int example_lz_thread_main(int argc, char *argv[])
 				// 完成
 				task_status_pub.task_status_1=13;
 				_task_status_monitor_pub = orb_advertise(ORB_ID(task_status_monitor), &task_status_pub);
-				orb_publish(ORB_ID(task_status_monitor), _task_status_monitor_pub, &task_status_pub);*/
+				orb_publish(ORB_ID(task_status_monitor), _task_status_monitor_pub, &task_status_pub);
 			}
 			if(task_status_sub.task_status_1==13) //喷绘“完成”
 			{

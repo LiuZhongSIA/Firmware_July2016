@@ -35,7 +35,7 @@ else
 			echo "INFO  [init] MicroSD card formatted"
 		else
 			echo "ERROR [init] Format failed"
-			tone_alarm MNBG
+			# tone_alarm MNBG
 			set LOG_FILE /dev/null
 		fi
 	else
@@ -237,7 +237,7 @@ then
 
 			set IO_PRESENT yes
 		else
-			tone_alarm MLL32CP8MB
+			# tone_alarm MLL32CP8MB
 
 			if px4io start
 			then
@@ -257,16 +257,16 @@ then
 				if px4io checkcrc $IO_FILE
 				then
 					echo "INFO  [init] PX4IO CRC OK after updating" >> $LOG_FILE
-					tone_alarm MLL8CDE
+					# tone_alarm MLL8CDE
 
 					set IO_PRESENT yes
 				else
 					echo "ERROR [init] PX4IO update failed" >> $LOG_FILE
-					tone_alarm $TUNE_ERR
+					# tone_alarm $TUNE_ERR
 				fi
 			else
 				echo "ERROR [init] PX4IO update failed" >> $LOG_FILE
-				tone_alarm $TUNE_ERR
+				# tone_alarm $TUNE_ERR
 			fi
 		fi
 		unset IO_FILE
@@ -274,7 +274,7 @@ then
 		if [ $IO_PRESENT == no ]
 		then
 			echo "ERROR [init] PX4IO not found" >> $LOG_FILE
-			tone_alarm $TUNE_ERR
+			# tone_alarm $TUNE_ERR
 		fi
 	fi
 
@@ -377,7 +377,7 @@ then
 				sh /etc/init.d/rc.io
 			else
 				echo "INFO  [init] PX4IO start failed" >> $LOG_FILE
-				tone_alarm $TUNE_ERR
+				# tone_alarm $TUNE_ERR
 			fi
 		fi
 
@@ -387,7 +387,7 @@ then
 			then
 			else
 				echo "ERR  [init] FMU start failed" >> $LOG_FILE
-				tone_alarm $TUNE_ERR
+				# tone_alarm $TUNE_ERR
 			fi
 
 			if ver hwcmp PX4FMU_V1
@@ -419,7 +419,7 @@ then
 			then
 			else
 				echo "ERROR [init] MK start failed" >> $LOG_FILE
-				tone_alarm $TUNE_ERR
+				# tone_alarm $TUNE_ERR
 			fi
 			unset MKBLCTRL_ARG
 		fi
@@ -431,7 +431,7 @@ then
 			then
 			else
 				echo "ERROR [init] PWM SIM start failed" >> $LOG_FILE
-				tone_alarm $TUNE_ERR
+				# tone_alarm $TUNE_ERR
 			fi
 		fi
 
@@ -447,7 +447,7 @@ then
 					sh /etc/init.d/rc.io
 				else
 					echo "ERROR [init] PX4IO start failed" >> $LOG_FILE
-					tone_alarm $TUNE_ERR
+					# tone_alarm $TUNE_ERR
 				fi
 			fi
 		else
@@ -457,7 +457,7 @@ then
 				then
 				else
 					echo "ERROR [init] FMU mode_$FMU_MODE start failed" >> $LOG_FILE
-					tone_alarm $TUNE_ERR
+					# tone_alarm $TUNE_ERR
 				fi
 
 				if ver hwcmp PX4FMU_V1
@@ -559,7 +559,7 @@ then
 		if uavcan start
 		then
 		else
-			tone_alarm $TUNE_ERR
+			# tone_alarm $TUNE_ERR
 		fi
 	fi
 
@@ -568,7 +568,7 @@ then
 		if uavcan start fw
 		then
 		else
-			tone_alarm $TUNE_ERR
+			# tone_alarm $TUNE_ERR
 		fi
 	fi
 
@@ -892,7 +892,7 @@ then
 	if [ $LOG_FILE == /dev/null ]
 	then
 		# Play SOS
-		tone_alarm error
+		# tone_alarm error
 	fi
 
 # End of autostart

@@ -11,7 +11,7 @@ set(config_module_list
 	drivers/device
 	drivers/stm32
 	drivers/stm32/adc
-	#drivers/stm32/tone_alarm
+	drivers/stm32/tone_alarm
 	drivers/led
 	drivers/gpioa_port
 	drivers/px4fmu

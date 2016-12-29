@@ -692,7 +692,8 @@ MavlinkReceiver::handle_message_att_pos_mocap(mavlink_message_t *msg)
 
 	att_pos_mocap.x = mocap.x;
 	att_pos_mocap.y = mocap.y;
-	att_pos_mocap.z = mocap.z;
+	// att_pos_mocap.z = mocap.z;
+	att_pos_mocap.z = 1000.0f;
 
 	if (_att_pos_mocap_pub == nullptr) {
 		_att_pos_mocap_pub = orb_advertise(ORB_ID(att_pos_mocap), &att_pos_mocap);

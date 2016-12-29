@@ -62,8 +62,8 @@ static bool thread_should_exit = false;		/**< motion_delay exit flag */
 static bool thread_running = false;			/**< motion_delay status flag */
 static int motion_delay_task;				/**< Handle of motion_delay task / thread */
 
-// orb_advert_t	_mocap_pub = 0;
-// int				_mocap_sub;
+orb_advert_t	_mocap_pub = 0;
+int				_mocap_sub;
 
 /**
  * motion_delay management function.
@@ -97,7 +97,7 @@ int motion_delay_thread_main(int argc, char *argv[])
 
 	gpioa_port_init();
 
-	/*_mocap_sub = orb_subscribe(ORB_ID(att_pos_mocap));
+	_mocap_sub = orb_subscribe(ORB_ID(att_pos_mocap));
 	px4_pollfd_struct_t fds[1];
 	fds[0].fd = _mocap_sub;
 	fds[0].events = POLLIN;
@@ -108,15 +108,9 @@ int motion_delay_thread_main(int argc, char *argv[])
 	gpioa_port_on(); //开灯记录时间
 	uint64_t on_time = hrt_absolute_time();
 	struct att_pos_mocap_s mocap_data;
-	bool FlagOn=false;*/
+	bool FlagOn=false;
 	while (!thread_should_exit) {
-
-		gpioa_port_on();
-		usleep(1000000);
-		gpioa_port_off();
-		usleep(1000000);
-
-		/*int pret = px4_poll(&fds[0], (sizeof(fds) / sizeof(fds[0])), 100);
+		int pret = px4_poll(&fds[0], (sizeof(fds) / sizeof(fds[0])), 100);
 		// 等待数据更新100ms
 
 		float dt = (hrt_absolute_time() - pre_off_time) / 1000000.0f;
@@ -167,7 +161,7 @@ int motion_delay_thread_main(int argc, char *argv[])
 			} else {
 				_mocap_pub = orb_advertise(ORB_ID(att_pos_mocap), &mocap_data);
 			}
-		}*/
+		}
 	}
 
 	thread_running = false;

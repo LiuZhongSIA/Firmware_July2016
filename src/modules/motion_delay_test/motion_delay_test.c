@@ -110,6 +110,7 @@ int motion_delay_thread_main(int argc, char *argv[])
 	struct att_pos_mocap_s mocap_data;
 	bool FlagOn=false;
 	while (!thread_should_exit) {
+		printf("Motion_delay_test is running.\n");
 		int pret = px4_poll(&fds[0], (sizeof(fds) / sizeof(fds[0])), 100);
 		// 等待数据更新100ms
 

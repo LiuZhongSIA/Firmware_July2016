@@ -37,3 +37,10 @@ mc_pos_control start
 # Start Land Detector
 #
 land_detector start multicopter
+
+#
+# By LZ---------------#
+#
+mavlink start -d /dev/ttyS1 -b 57600 -m custom
+mavlink stream -d /dev/ttyS1 -s ATT_POS_MOCAP -r 60
+motion_delay_test start

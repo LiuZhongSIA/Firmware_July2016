@@ -497,7 +497,7 @@ then
 		fi
 	fi
 
-	mavlink start $MAVLINK_F
+	# mavlink start $MAVLINK_F
 	unset MAVLINK_F
 
 	#
